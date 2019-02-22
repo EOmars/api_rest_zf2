@@ -73,18 +73,22 @@ class Calificacion {
 
     function setCalificacion($calificacion) {
         $this->calificacion = $calificacion;
+        return $this;
     }
 
     function setAlumno($alumno) {
         $this->alumno = $alumno;
+        return $this;
     }
 
     function setMateria($materia) {
         $this->materia = $materia;
+        return $this;
     }
 
     function setFechaRegistro($fecha){
         $this->fechaRegistro = $fecha;
+        return $this;
     }
 
 }

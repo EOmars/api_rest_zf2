@@ -13,28 +13,47 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Application\Entity\Calificacion;
+use Application\Entity\Alumno;
+use Application\Entity\Materia;
 
 class CalificacionController extends AbstractRestfulController {
 
     function get($id) {
         parent::get($id);
     }
-    
-    function getList(){  
+
+    function getList() {
         $this->response->setStatusCode(405);
 
         return array(
             'content' => 'Method Not Allowed'
         );
-        
     }
-    
-    
+
     function create($data) {
-        return (new JsonModel())->setVariables($data);
-        
+        $response = new JsonModel();
+        $objectManager = $this
+                ->getServiceLocator()
+                ->get('Doctrine\ORM\EntityManager');
+        $calificacion = new Calificacion();
+        $alumno = $objectManager->find('Application\Entity\Alumno', (int) $data['alumno']);
+        $materia = $objectManager->find('Application\Entity\Materia', (int) $data['materia']);
+
+        $calificacion
+                ->setCalificacion((int) $data['calificacion'])
+                ->setAlumno($alumno)
+                ->setMateria($materia)
+                ->setFechaRegistro(new \DateTime("now"));
+        try {
+            $objectManager->persist($calificacion);
+            $objectManager->flush();
+            $this->response->setStatusCode(201);
+            $response->setVariables(['success' => 'ok', 'msg' => 'calificacion registrada']);
+        } catch (\Exception $e) {
+            $this->response->setStatusCode(400);
+            $response->setVariables(['success' => 'error', 'msg' => $e->getMessage()]);
+        }
+        return $response;
     }
-    
-    
 
 }
