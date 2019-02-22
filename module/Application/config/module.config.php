@@ -6,7 +6,10 @@ return array(
             'alumno' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route' => '/alumno/:id',
+                    'route' => '/alumno/[:id]',
+                    'constraints' => array(
+                        'id' => '\d+'
+                    ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller' => 'Alumno',

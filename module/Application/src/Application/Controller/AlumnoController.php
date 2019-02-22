@@ -20,53 +20,57 @@ class AlumnoController extends AbstractRestfulController {
         $objectManager = $this
                 ->getServiceLocator()
                 ->get('Doctrine\ORM\EntityManager');
-
-        $user = new \Application\Entity\Alumno();
-        $user->setNombre('Marco Pivetta');
-        $objectManager = $this
-                ->getServiceLocator()
-                ->get('Doctrine\ORM\EntityManager');
-
-        $user = new \Application\Entity\Alumno();
         $model = new JsonModel();
         $model->setVariables(["hola" => "mundo"]);
         return $model;
     }
 
-    public function get($id) {
+    function get($id) {
+        $response = new JsonModel();
         $objectManager = $this
                 ->getServiceLocator()
                 ->get('Doctrine\ORM\EntityManager');
-        $alumno = $objectManager->find('Application\Entity\Alumno', $id);
+        $alumno = $objectManager->find('Application\Entity\Alumno', (int) $id);
+        if (empty($alumno)) {
+            $this->response->setStatusCode(404);
+        } else {
+            $data = $this->toArray($alumno);
+            if ($data)
+                $data[] = ['promedio' => $this->getPromedio($alumno->getCalificaciones())];
+            $response->setVariables($data);
+        }
 
-        return (new JsonModel())->setVariables($this->toArray($alumno));
+        return $response;
+    }
+
+    function getList() {
+        $this->response->setStatusCode(405);
+        return (new JsonModel())->setVariables(['content' => 'Method Not Allowed']);
     }
 
     protected function toArray(Alumno $alumno) {
         $respuesta = [];
-        $promedio = $this->getPromedio($alumno->getCalificaciones());
         foreach ($alumno->getCalificaciones() as $calificacion) {
-            
+
             $respuesta[] = [
                 'id_t_usuario' => $alumno->getId(),
                 'nombre' => $alumno->getNombre(),
                 'apellido' => $alumno->getApPaterno() . " " . $alumno->getApMaterno(),
                 'materia' => $calificacion->getMateria()->getNombre(),
-                'calificacion' => $calificacion->getCalificacion(),                
-                'fecha_registro' => $calificacion->getFechaRegistro(),
-                'promedio' => $promedio
+                'calificacion' => $calificacion->getCalificacion(),
+                'fecha_registro' => $calificacion->getFechaRegistro() ? $calificacion->getFechaRegistro()->format('Y-d-m') : null
             ];
         }
 
         return $respuesta;
     }
 
-    protected function getPromedio($calificaciones) {
+    function getPromedio($calificaciones) {
         $sum = 0;
-        foreach($calificaciones as $calificacion){
+        foreach ($calificaciones as $calificacion) {
             $sum += $calificacion->getCalificacion();
-        }        
-        return number_format($sum / $calificaciones->count() , 2);
+        }
+        return $calificaciones->count() ? number_format($sum / $calificaciones->count(), 2) : 0;
     }
 
 }

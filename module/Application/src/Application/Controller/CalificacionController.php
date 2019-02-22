@@ -13,7 +13,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Application\Entity\Calificacion;
-use Application\Entity\Alumno;
+use Application\Entity\AlumnoController;
 use Application\Entity\Materia;
 
 class CalificacionController extends AbstractRestfulController {
@@ -23,13 +23,25 @@ class CalificacionController extends AbstractRestfulController {
     }
 
     function getList() {
-        $this->response->setStatusCode(405);
-
-        return array(
-            'content' => 'Method Not Allowed'
-        );
+        $data = [];
+        $objectManager = $this
+                ->getServiceLocator()
+                ->get('Doctrine\ORM\EntityManager');
+        $calificaciones = $objectManager->getRepository('Application\Entity\Calificacion')
+                ->findAll();
+        
+        foreach($calificaciones as $calificacion){
+            $data[] = $this->toArray($calificacion);
+        }
+        
+        return (new JsonModel())->setVariables($data);
     }
 
+    /**
+     * Registra una nueva calificacion
+     * @param array $data
+     * @return JsonModel
+     */
     function create($data) {
         $response = new JsonModel();
         $objectManager = $this
@@ -54,6 +66,17 @@ class CalificacionController extends AbstractRestfulController {
             $response->setVariables(['success' => 'error', 'msg' => $e->getMessage()]);
         }
         return $response;
+    }
+
+    private function toArray($calificacion) {
+        return [
+            'id_t_usuario' => $calificacion->getAlumno()->getId(),
+            'nombre' => $calificacion->getAlumno()->getNombre(),
+            'apellido' => trim($calificacion->getAlumno()->getApPaterno() . ' ' . $calificacion->getAlumno()->getApMaterno()),
+            'materia' => $calificacion->getMateria()->getNombre(),
+            'calificaion' => $calificacion->getCalificacion(),
+            'fecha_registro' => $calificacion->getFechaRegistro() ? $calificacion->getFechaRegistro()->format('Y-d-m') : null
+        ];
     }
 
 }
