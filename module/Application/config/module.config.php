@@ -6,7 +6,7 @@ return array(
             'alumno' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route' => '/alumno/[:id]',
+                    'route' => '/alumno[/:id]',
                     'constraints' => array(
                         'id' => '\d+'
                     ),
@@ -17,9 +17,9 @@ return array(
                 ),
             ),
             'calificacion' => array(
-                'type' => 'literal',
+                'type' => 'segment',
                 'options' => array(
-                    'route' => '/calificacion',
+                    'route' => '/calificacion[/:id]',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller' => 'Calificacion',

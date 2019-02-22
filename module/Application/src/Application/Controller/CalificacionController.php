@@ -19,7 +19,8 @@ use Application\Entity\Materia;
 class CalificacionController extends AbstractRestfulController {
 
     function get($id) {
-        parent::get($id);
+        $this->response->setStatusCode(405);
+        return (new JsonModel())->setVariables(['content' => 'Method Not Allowed']);
     }
 
     function getList() {
@@ -29,11 +30,11 @@ class CalificacionController extends AbstractRestfulController {
                 ->get('Doctrine\ORM\EntityManager');
         $calificaciones = $objectManager->getRepository('Application\Entity\Calificacion')
                 ->findAll();
-        
-        foreach($calificaciones as $calificacion){
+
+        foreach ($calificaciones as $calificacion) {
             $data[] = $this->toArray($calificacion);
         }
-        
+
         return (new JsonModel())->setVariables($data);
     }
 
@@ -64,6 +65,25 @@ class CalificacionController extends AbstractRestfulController {
         } catch (\Exception $e) {
             $this->response->setStatusCode(400);
             $response->setVariables(['success' => 'error', 'msg' => $e->getMessage()]);
+        }
+        return $response;
+    }
+
+    function update($id, $data) {
+        $response = new JsonModel();
+        $objectManager = $this
+                ->getServiceLocator()
+                ->get('Doctrine\ORM\EntityManager');
+        $calificacion = $objectManager->find('Application\Entity\Calificacion', (int) $id);
+
+        if (empty($calificacion)) {
+            $this->response->setStatusCode(400);
+            $response->setVariables(['success' => 'error', 'msg' => 'La calificacion no existe']);
+        } else {
+            $calificacion->setCalificacion($data['calificacion']);
+            $objectManager->flush();
+            $this->response->setStatusCode(202);
+            $response->setVariables(['success' => 'ok', 'msg' => 'Calificacion actualizada']);
         }
         return $response;
     }

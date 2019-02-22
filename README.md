@@ -14,7 +14,7 @@ materia : int
 
 Ejemplo: 
 ```
-curl -XPOST -H "Content-Type: application/json"   -d'{"calificacion":10,"alumno":1,"materia":1}' http://mi-dominio/calificacion
+curl -XPOST -H "Content-Type: application/json"   -d'{"calificacion":10,"alumno":1,"materia":1}' http://mi-dominio/calificacion/
 ```
 
 # 2. GET calificaciones de un alumno en específico
@@ -28,16 +28,15 @@ curl -XGET http://mi-dominio/alumno/1
 
 # 3. PUT actualizar calificaciom
 
-### /calificacion
+### /calificacion/id
 
 ### Parámetros: 
 ```
 calificacion : float
-id : int
 ```
 Ejemplo: 
 ```
-curl -XPOST -H "Content-Type: application/json"   -d'{"calificacion":10,"alumno":1,"materia":1}' http://mi-dominio/calificacion
+curl -XPUT -H "Content-Type: application/json"   -d'{"calificacion":5}' http://mi-dominio/calificacion/1
 ```
 
 
