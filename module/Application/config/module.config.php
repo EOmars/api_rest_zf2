@@ -20,6 +20,9 @@ return array(
                 'type' => 'segment',
                 'options' => array(
                     'route' => '/calificacion[/:id]',
+                    'constraints' => array(
+                        'id' => '\d+'
+                    ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller' => 'Calificacion',

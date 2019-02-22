@@ -88,6 +88,29 @@ class CalificacionController extends AbstractRestfulController {
         return $response;
     }
 
+    function delete($id) {
+        $response = new JsonModel();
+        $objectManager = $this
+                ->getServiceLocator()
+                ->get('Doctrine\ORM\EntityManager');
+        $calificacion = $objectManager->find('Application\Entity\Calificacion', (int) $id);
+
+        if (empty($calificacion)) {
+            $this->response->setStatusCode(404);
+            $response->setVariables(['success' => 'error', 'msg' => 'La calificacion no existe']);
+        } else {
+            try {
+                $objectManager->remove($calificacion);
+                $objectManager->flush();
+                $response->setVariables(['success' => 'ok', 'msg' => 'Calificacion eliminada']);
+            } catch (\Exception $e) {
+                $this->response->setStatusCode(400);
+                $response->setVariables(['success' => 'error', 'msg' => $e->getMessage()]);
+            }
+        }
+        return $response;
+    }
+
     private function toArray($calificacion) {
         return [
             'id_t_usuario' => $calificacion->getAlumno()->getId(),

@@ -39,6 +39,12 @@ Ejemplo:
 curl -XPUT -H "Content-Type: application/json"   -d'{"calificacion":5}' http://mi-dominio/calificacion/1
 ```
 
+# 4. DELETE Eliminar Calificacion
 
+### /calificacion/id
 
+Ejemplo: 
+```
+curl -XDELETE  http://mi-dominio/calificacion/1
+```
 
