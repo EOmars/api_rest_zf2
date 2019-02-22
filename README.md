@@ -1,6 +1,27 @@
 # api_rest_zf2
 prueba de api rest con zf2 y doctrine
 
+Para cargar las bibliotecas ejecutar:
+```
+composer install
+```
+
+Agregar credenciales correspondientes en archivo de configuración
+```
+config/local.php
+```
+
+La estructura de base de datos se encuentra en 
+```
+data/database.sql
+```
+
+Desde el servidor web indicar como punto de entrada de ejecución:
+```
+public/index.php
+```
+
+
 
 # 1. POST calificaciones
 ### /calificacion
